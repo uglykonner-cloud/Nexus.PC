@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows Nexus PC - Boot Screen</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Boot Screen - Black Background with White Outline Shapes */
+        .boot-screen {
+            text-align: center;
+            animation: fadeIn 0.5s ease-in;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated Background Shapes Container */
+        .shapes-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        /* Animated Background Shapes */
+        .shape {
+            position: absolute;
+            opacity: 0.2;
+        }
+
+        /* Shape Animations */
+        .shape-circle {
+            border: 3px solid white;
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite, rotate 15s linear infinite;
+        }
+
+        .shape-square {
+            border: 3px solid white;
+            animation: float 10s ease-in-out infinite reverse;
+        }
+
+        .shape-rectangle {
+            border: 2px solid white;
+            animation: pulse 6s ease-in-out infinite;
+        }
+
+        .shape-triangle {
+            width: 0;
+            height: 0;
+            animation: float 12s ease-in-out infinite;
+        }
+
+        .shape-line {
+            background: white;
+            animation: rotate-line 20s linear infinite;
+        }
+
+        /* Individual Shape Sizes */
+        .s1 { width: 150px; height: 150px; }
+        .s2 { width: 120px; height: 120px; }
+        .s3 { width: 200px; height: 80px; }
+        .s4 { width: 100px; height: 100px; }
+        .s5 { width: 180px; height: 5px; }
+        .s6 { width: 140px; height: 140px; }
+        .s7 { width: 110px; height: 110px; }
+
+        /* Position shapes */
+        .shape-1 {
+            top: 8%;
+            left: 5%;
+        }
+
+        .shape-2 {
+            top: 15%;
+            right: 8%;
+        }
+
+        .shape-3 {
+            bottom: 20%;
+            left: 10%;
+        }
+
+        .shape-4 {
+            bottom: 15%;
+            right: 12%;
+        }
+
+        .shape-5 {
+            top: 50%;
+            left: 3%;
+        }
+
+        .shape-6 {
+            top: 30%;
+            right: 5%;
+        }
+
+        .shape-7 {
+            bottom: 35%;
+            right: 8%;
+        }
+
+        /* Keyframe Animations */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) translateX(0px);
+            }
+            50% {
+                transform: translateY(40px) translateX(20px);
+            }
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.2;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.4;
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes rotate-line {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Boot Content */
+        .boot-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .boot-screen h1 {
+            font-size: 5rem;
+            color: white;
+            margin-bottom: 30px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+            animation: slideDown 1s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .boot-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 2px;
+            margin-bottom: 50px;
+            animation: slideDown 1s ease-out 0.2s backwards;
+        }
+
+        .loading-container {
+            margin: 40px 0;
+            animation: slideUp 1s ease-out 0.4s backwards;
+        }
+
+        .loading-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+            font-weight: 300;
+        }
+
+        .progress-bar {
+            width: 350px;
+            height: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 2px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
+            transition: width 0.05s linear;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Login Screen */
+        .login-screen {
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            background: #000080;
+            min-height: 100vh;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-screen h2 {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+
+        .login-form {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 5px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: white;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 3px;
+            background: white;
+            color: black;
+            outline: none;
+            transition: box-shadow 0.3s;
+        }
+
+        .form-group input:focus {
+            box-shadow: 0 0 5px #0078D4;
+        }
+
+        .btn-login {
+            background: #0078D4;
+            color: white;
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        .btn-login:hover {
+            background: #0063B1;
+        }
+
+        .btn-login:active {
+            transform: scale(0.98);
+        }
+
+        .clock {
+            color: white;
+            font-size: 14px;
+            margin-top: 30px;
+        }
+
+        .clock-time {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* Desktop Screen */
+        .desktop-screen {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e90ff 0%, #00bfff 100%);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: #0c0c0c;
+            border-top: 1px solid #1a1a1a;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            z-index: 1000;
+        }
+
+        .taskbar-text {
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .desktop-content {
+            text-align: center;
+            color: white;
+            margin-bottom: 60px;
+        }
+
+        .desktop-content h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .desktop-content p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-exit {
+            background: #D9534F;
+            color: white;
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-exit:hover {
+            background: #c9302c;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .boot-screen h1 {
+                font-size: 3rem;
+            }
+
+            .boot-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .login-screen h2 {
+                font-size: 1.5rem;
+            }
+
+            .desktop-content h1 {
+                font-size: 2rem;
+            }
+
+            .progress-bar {
+                width: 250px;
+            }
+
+            .s1 { width: 80px; height: 80px; }
+            .s2 { width: 60px; height: 60px; }
+            .s3 { width: 100px; height: 50px; }
+            .s4 { width: 70px; height: 70px; }
+            .s5 { width: 120px; height: 3px; }
+            .s6 { width: 90px; height: 90px; }
+            .s7 { width: 75px; height: 75px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Boot Screen with Animated Shapes -->
+        <div class="boot-screen" id="bootScreen">
+            <!-- Animated Background Shapes -->
+            <div class="shapes-container">
+                <!-- Circle 1 -->
+                <div class="shape shape-1">
+                    <div class="shape-circle s1"></div>
+                </div>
+
+                <!-- Square 1 -->
+                <div class="shape shape-2">
+                    <div class="shape-square s2"></div>
+                </div>
+
+                <!-- Rectangle -->
+                <div class="shape shape-3">
+                    <div class="shape-rectangle s3"></div>
+                </div>
+
+                <!-- Circle 2 -->
+                <div class="shape shape-4">
+                    <div class="shape-circle s4"></div>
+                </div>
+
+                <!-- Line -->
+                <div class="shape shape-5">
+                    <div class="shape-line s5"></div>
+                </div>
+
+                <!-- Square 2 -->
+                <div class="shape shape-6">
+                    <div class="shape-square s6"></div>
+                </div>
+
+                <!-- Circle 3 -->
+                <div class="shape shape-7">
+                    <div class="shape-circle s7"></div>
+                </div>
+            </div>
+
+            <!-- Boot Content -->
+            <div class="boot-content">
+                <h1>NEXUS</h1>
+                <div class="boot-subtitle">WINDOWS PC</div>
+                <div class="loading-container">
+                    <div class="loading-text">Starting up...</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Screen -->
+        <div class="login-screen" id="loginScreen">
+            <h2>Welcome</h2>
+            <form class="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="nameInput">Enter your name:</label>
+                    <input 
+                        type="text" 
+                        id="nameInput" 
+                        placeholder="Your name" 
+                        autofocus
+                        required
+                    >
+                    <div class="error-message" id="errorMessage"></div>
+                </div>
+                <button type="submit" class="btn-login">Login</button>
+            </form>
+            <div class="clock">
+                <div class="clock-time" id="clockTime">--:--:-- --</div>
+                <div id="clockDate">-- -- --, ----</div>
+            </div>
+        </div>
+
+        <!-- Desktop Screen -->
+        <div class="desktop-screen" id="desktopScreen">
+            <div class="desktop-content">
+                <h1 id="welcomeMessage">Hello, User!</h1>
+                <p>Your desktop is ready</p>
+                <button class="btn-exit" onclick="location.reload()">Restart</button>
+            </div>
+            <div class="taskbar">
+                <div class="taskbar-text">Windows Nexus PC</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bootScreen = document.getElementById('bootScreen');
+        const loginScreen = document.getElementById('loginScreen');
+        const desktopScreen = document.getElementById('desktopScreen');
+        const progressFill = document.getElementById('progressFill');
+        const nameInput = document.getElementById('nameInput');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Boot animation
+        function startBootAnimation() {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 25;
+                if (progress > 100) progress = 100;
+                progressFill.style.width = progress + '%';
+
+                if (progress === 100) {
+                    clearInterval(interval);
+                    setTimeout(showLoginScreen, 500);
+                }
+            }, 100);
+        }
+
+        function showLoginScreen() {
+            bootScreen.style.display = 'none';
+            loginScreen.style.display = 'flex';
+            nameInput.focus();
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        function updateClock() {
+            fetch('/api/time')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('clockTime').textContent = data.time;
+                    document.getElementById('clockDate').textContent = data.date;
+                })
+                .catch(err => console.error('Clock update failed:', err));
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const name = nameInput.value.trim();
+
+            if (!name) {
+                showError('Please enter your name');
+                return;
+            }
+
+            fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: name })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showDesktop(data.name);
+                } else {
+                    showError(data.message || 'Login failed');
+                }
+            })
+            .catch(err => {
+                console.error('Login error:', err);
+                showError('Connection error. Please try again.');
+            });
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        function showDesktop(name) {
+            loginScreen.style.display = 'none';
+            desktopScreen.style.display = 'flex';
+            document.getElementById('welcomeMessage').textContent = `Hello, ${name}!`;
+        }
+
+        // Start the boot sequence
+        window.addEventListener('load', startBootAnimation);
+    </script>
+</body>
+</html>
